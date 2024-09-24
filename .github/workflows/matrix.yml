@@ -1,0 +1,16 @@
+name: matrix
+
+on: workflow_dispatch
+
+jobs:
+  deploy:
+    strategry:
+      matrix:
+        os: [ubuntu-latest, ubuntu-latest]
+        images: [hello-world, alphine]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: echo docker info
+      run: docker info
+    - name: run image on ${{ matrix.os }}
+      run: docker run ${{ matrix.images }}
