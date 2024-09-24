@@ -4,7 +4,7 @@ on: workflow_dispatch
 
 jobs:
   deploy:
-    strategry:
+    strategy:
       matrix:
         os: [ubuntu-latest, ubuntu-latest]
         images: [hello-world, alphine]
