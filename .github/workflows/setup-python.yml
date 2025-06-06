@@ -1,0 +1,47 @@
+name: Setup Env
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu:latest
+    steps:
+      - name: Process Variables
+        env:
+          SQLPLUS_GROUPID: 'thirdparty/com/oracle'
+          SQLPLUS_ARTIFACTID: 'sqlplus'
+          SQLPLUS_VERSION: '12.1.0.1.0'
+          SQLPLUS_PACKAGING: 'zip'
+        run: |
+          apt-get update && apt-get install -y wget && apt-get install unzip
+          ### Set Environment Variables
+          echo SQLPLUS_ARTIFACT="$SQLPLUS_ARTIFACTID-$SQLPLUS_VERSION.$SQLPLUS_PACKAGING" >> $GITHUB_ENV
+          echo SQLPLUS_FOLDER="$SQLPLUS_ARTIFACTID-$SQLPLUS_VERSION" >> $GITHUB_ENV
+          echo SQLPLUS_DOWNLOADLNK="https://$ARTIFACTORY_USERNAME:$ARTIFACTORY_PASSWORD@${{vars.ARTIFACTORY_HOST}}/artifactory/$ARTIFACT_REPO/$SQLPLUS_GROUPID/$SQLPLUS_ARTIFACTID/$SQLPLUS_VERSION/"  >> $GITHUB_ENV
+
+      - name: Set pip config
+        run: |
+          echo "[global]" > /etc/pip.conf
+          echo "trusted-host = pypi.org files.pythonhosted.org" >> /etc/pip.conf
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Python
+        uses: actions/setup-python@v5.6.0
+        with:
+          python-version: '3.13'
+
+      - name: Show Versions
+        run: |
+          java -version
+          echo '---'
+          python --version
+          echo '---'
+          which java
+          which python
+          echo '---'
